@@ -33,13 +33,23 @@ export interface Conversation {
   metadata: Record<string, any>; // JSONB
 }
 
+export interface FileAttachment {
+  fileName: string;
+  content: string; // Base64 encoded content
+  mimeType: string;
+}
+
 export interface Message {
-  id: number; // Auto-incrementing integer
+  id: string; // Changed to string for consistency with UI
   computed_session_user_id: string | null; // UUID computed column
   session_id: string; // VARCHAR
-  message: Record<string, any>; // JSONB
+  message: {
+    type: 'human' | 'ai';
+    content: string;
+    files?: FileAttachment[];
+  }; // JSONB with structured format
   message_data: string | null;
-  created_at: string | null; // ISO timestamp
+  created_at: string; // ISO timestamp
 }
 
 // ============================================================================
@@ -79,15 +89,12 @@ export interface CreateConversationData {
 
 export interface CreateMessageData {
   session_id: string;
-  message: Record<string, any>;
+  message: {
+    type: 'human' | 'ai';
+    content: string;
+    files?: FileAttachment[];
+  };
   message_data?: string;
-}
-
-export interface MessageContent {
-  role: 'user' | 'assistant' | 'system';
-  content: string;
-  timestamp?: string;
-  metadata?: Record<string, any>;
 }
 
 export interface ConversationWithMessages extends Conversation {
