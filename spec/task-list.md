@@ -25,19 +25,54 @@ Building a modern RAG (Retrieval-Augmented Generation) application with Next.js 
 ## 2. Authentication System
 
 ### Supabase Auth Integration
-- [ ] Create authentication layouts and components
-- [ ] Implement clean, modern login interface with neon-dark theme
-- [ ] Add Google OAuth integration
-- [ ] Add email/password authentication option
-- [ ] Create user profile management system linked to `user_profiles` table
-- [ ] Implement responsive design for mobile and desktop
-- [ ] Add authentication guards and protected routes
+
+#### Core Authentication Setup
+- [ ] Install Supabase SSR package: `npm install @supabase/ssr`
+- [ ] Create Supabase client utilities in `lib/supabase/`
+  - [ ] Browser client (`createClient()`) for Client Components
+  - [ ] Server client (`createServerClient()`) for Server Components/Actions
+- [ ] Configure middleware for token refresh and session management
+- [ ] Create authentication callback route (`app/auth/callback/route.ts`)
+
+#### Google OAuth Configuration
+- [ ] Set up Google Cloud Console project
+  - [ ] Configure OAuth consent screen with domain and scopes
+  - [ ] Create OAuth 2.0 Client ID credentials (Web application type)
+  - [ ] Add authorized JavaScript origins and redirect URLs
+- [ ] Configure Google Auth Provider in Supabase Dashboard
+  - [ ] Add Google Client ID and Client Secret
+  - [ ] Configure redirect URLs
+- [ ] Implement Google OAuth sign-in flow with `signInWithOAuth()`
+
+#### Email/Password Authentication
+- [ ] Create email/password sign-in functionality
+- [ ] Implement user registration with email confirmation
+- [ ] Add password reset functionality
+- [ ] Create email confirmation handler route
+- [ ] Implement server actions for authentication operations
+
+#### UI Components & Layouts
+- [ ] Create authentication layout component with neon-dark theme
+- [ ] Build login/signup form components with validation
+- [ ] Implement loading states and error handling
+- [ ] Create responsive design for mobile and desktop
+- [ ] Add social login buttons with proper styling
+
+#### Route Protection & User Management
+- [ ] Implement authentication guards using `supabase.auth.getUser()`
+- [ ] Create protected route middleware
+- [ ] Build user profile management interface
+- [ ] Implement automatic user profile creation (linked to `user_profiles` table)
+- [ ] Add sign-out functionality
+- [ ] Create session management utilities
 
 ### User Management
 - [ ] Create user profile creation/update functionality
 - [ ] Implement admin privilege checking based on `is_admin` flag
-- [ ] Add authentication state management in Redux
+- [ ] Add authentication state management with React Context
 - [ ] Create custom hooks for authentication operations
+- [ ] Implement user profile auto-creation trigger (server-side)
+- [ ] Add user role-based access control helpers
 
 ---
 
