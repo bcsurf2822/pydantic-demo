@@ -19,6 +19,7 @@ CREATE TABLE conversations (
 -- Messages table with computed columns for session_id components
 CREATE TABLE messages (
     id INT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    -- Limitation with N8N: Allow to use n8n or custom coded agents
     computed_session_user_id UUID GENERATED ALWAYS AS (
         CAST(SPLIT_PART(session_id, '~', 1) AS UUID)
     ) STORED,

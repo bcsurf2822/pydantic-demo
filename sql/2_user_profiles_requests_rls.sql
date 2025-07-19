@@ -1,3 +1,5 @@
+-- RLS for user_profiles and requests Row Level Security
+
 -- Create admin check function
 CREATE OR REPLACE FUNCTION public.is_admin()
 RETURNS BOOLEAN AS $$
@@ -6,6 +8,7 @@ DECLARE
 BEGIN
   SELECT COALESCE(up.is_admin, FALSE) INTO is_admin_user
   FROM user_profiles up
+  -- Returns current User ID
   WHERE up.id = auth.uid();
   
   RETURN is_admin_user;
