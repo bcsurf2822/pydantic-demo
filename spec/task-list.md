@@ -27,44 +27,46 @@ Building a modern RAG (Retrieval-Augmented Generation) application with Next.js 
 ### Supabase Auth Integration
 
 #### Core Authentication Setup
-- [ ] Install Supabase SSR package: `npm install @supabase/ssr`
-- [ ] Create Supabase client utilities in `lib/supabase/`
-  - [ ] Browser client (`createClient()`) for Client Components
-  - [ ] Server client (`createServerClient()`) for Server Components/Actions
-- [ ] Configure middleware for token refresh and session management
-- [ ] Create authentication callback route (`app/auth/callback/route.ts`)
+- [x] Install Supabase SSR package: `npm install @supabase/ssr`
+- [x] Create Supabase client utilities in `lib/supabase/`
+  - [x] Browser client (`createClient()`) for Client Components
+  - [x] Server client (`createServerClient()`) for Server Components/Actions
+- [x] Configure middleware for token refresh and session management
+- [x] Create authentication callback route (`app/auth/callback/route.ts`)
 
 #### Google OAuth Configuration
-- [ ] Set up Google Cloud Console project
-  - [ ] Configure OAuth consent screen with domain and scopes
-  - [ ] Create OAuth 2.0 Client ID credentials (Web application type)
-  - [ ] Add authorized JavaScript origins and redirect URLs
-- [ ] Configure Google Auth Provider in Supabase Dashboard
-  - [ ] Add Google Client ID and Client Secret
-  - [ ] Configure redirect URLs
-- [ ] Implement Google OAuth sign-in flow with `signInWithOAuth()`
+- [x] Set up Google Cloud Console project
+  - [x] Configure OAuth consent screen with domain and scopes
+  - [x] Create OAuth 2.0 Client ID credentials (Web application type)
+  - [x] Add authorized JavaScript origins and redirect URLs
+- [x] Configure Google Auth Provider in Supabase Dashboard
+  - [x] Add Google Client ID and Client Secret
+  - [x] Configure redirect URLs
+- [x] Implement Google OAuth sign-in flow with `signInWithOAuth()`
+
+**Note:** Minor callback issue with Google OAuth - need both Supabase callback URL (`https://[project-ref].supabase.co/auth/v1/callback`) and app callback URL (`http://localhost:3000/auth/callback`) in Google Cloud Console authorized redirect URIs.
 
 #### Email/Password Authentication
-- [ ] Create email/password sign-in functionality
-- [ ] Implement user registration with email confirmation
-- [ ] Add password reset functionality
-- [ ] Create email confirmation handler route
-- [ ] Implement server actions for authentication operations
+- [x] Create email/password sign-in functionality
+- [x] Implement user registration with email confirmation
+- [x] Add password reset functionality
+- [x] Create email confirmation handler route
+- [x] Implement server actions for authentication operations
 
 #### UI Components & Layouts
-- [ ] Create authentication layout component with neon-dark theme
-- [ ] Build login/signup form components with validation
-- [ ] Implement loading states and error handling
-- [ ] Create responsive design for mobile and desktop
-- [ ] Add social login buttons with proper styling
+- [x] Create authentication layout component with neon-dark theme
+- [x] Build login/signup form components with validation
+- [x] Implement loading states and error handling
+- [x] Create responsive design for mobile and desktop
+- [x] Add social login buttons with proper styling
 
 #### Route Protection & User Management
-- [ ] Implement authentication guards using `supabase.auth.getUser()`
-- [ ] Create protected route middleware
-- [ ] Build user profile management interface
-- [ ] Implement automatic user profile creation (linked to `user_profiles` table)
-- [ ] Add sign-out functionality
-- [ ] Create session management utilities
+- [x] Implement authentication guards using `supabase.auth.getUser()`
+- [x] Create protected route middleware
+- [x] Build user profile management interface
+- [x] Implement automatic user profile creation (linked to `user_profiles` table)
+- [x] Add sign-out functionality
+- [x] Create session management utilities
 
 ### User Management
 - [ ] Create user profile creation/update functionality

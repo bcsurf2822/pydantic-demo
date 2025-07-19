@@ -5,12 +5,28 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { login, signup, signInWithGoogle } from './actions'
 
 export default function LoginPage() {
   const [isSignUp, setIsSignUp] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [message, setMessage] = useState('')
+  const [error, setError] = useState('')
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    const errorParam = searchParams.get('error')
+    const messageParam = searchParams.get('message')
+    
+    if (errorParam) {
+      setError(errorParam)
+    }
+    if (messageParam) {
+      setMessage(messageParam)
+    }
+  }, [searchParams])
 
   const handleFormSubmit = async (formData: FormData) => {
     setIsLoading(true)
@@ -139,9 +155,20 @@ export default function LoginPage() {
             </div>
 
             {/* Error/Success Messages */}
-            <div className="mt-4 text-center text-sm">
-              {/* These will be populated by URL parameters */}
-            </div>
+            {(error || message) && (
+              <div className="mt-4 text-center text-sm">
+                {error && (
+                  <div className="bg-red-500/20 border border-red-500/40 text-red-300 px-4 py-2 rounded-lg mb-2">
+                    {error}
+                  </div>
+                )}
+                {message && (
+                  <div className="bg-green-500/20 border border-green-500/40 text-green-300 px-4 py-2 rounded-lg">
+                    {message}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

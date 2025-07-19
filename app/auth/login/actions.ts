@@ -16,12 +16,23 @@ export async function login(formData: FormData) {
     password: formData.get('password') as string,
   }
 
-  const { error } = await supabase.auth.signInWithPassword(data)
+  const { data: result, error } = await supabase.auth.signInWithPassword(data)
 
   if (error) {
-    redirect('/auth/login?error=Could not authenticate user')
+    console.error('Login error:', error)
+    
+    // Handle specific error cases
+    if (error.message.includes('Email not confirmed')) {
+      redirect('/auth/login?error=Please check your email and click the confirmation link before signing in')
+    }
+    if (error.message.includes('Invalid login credentials')) {
+      redirect('/auth/login?error=Invalid email or password')
+    }
+    
+    redirect(`/auth/login?error=${encodeURIComponent(error.message)}`)
   }
 
+  console.log('Login successful:', result.user?.email)
   revalidatePath('/', 'layout')
   redirect('/')
 }
@@ -34,14 +45,22 @@ export async function signup(formData: FormData) {
     password: formData.get('password') as string,
   }
 
-  const { error } = await supabase.auth.signUp(data)
+  const { data: result, error } = await supabase.auth.signUp(data)
 
   if (error) {
-    redirect('/auth/login?error=Could not create user')
+    console.error('Signup error:', error)
+    redirect(`/auth/login?error=${encodeURIComponent(error.message)}`)
   }
 
+  console.log('Signup result:', result)
   revalidatePath('/', 'layout')
-  redirect('/auth/login?message=Check email to continue sign in process')
+  
+  // Check if email confirmation is required
+  if (result.user && !result.user.email_confirmed_at) {
+    redirect('/auth/login?message=Check your email and click the confirmation link to complete registration')
+  }
+  
+  redirect('/auth/login?message=Account created successfully! You can now sign in.')
 }
 
 export async function signInWithGoogle() {
