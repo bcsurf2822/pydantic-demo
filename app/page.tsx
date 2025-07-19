@@ -105,9 +105,12 @@ export default async function Home() {
         <div className="mt-12 text-center">
           <h3 className="text-2xl font-semibold text-white mb-6">Quick Actions</h3>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-300 hover:to-yellow-500 text-black font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-[1.02] shadow-lg shadow-yellow-400/25">
-              Start New Chat
-            </button>
+            <a
+              href="/chat"
+              className="bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-300 hover:to-yellow-500 text-black font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-[1.02] shadow-lg shadow-yellow-400/25 inline-block"
+            >
+              Test Chat API
+            </a>
             <button className="bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-400 hover:to-purple-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-[1.02] shadow-lg shadow-purple-500/25">
               Upload Documents
             </button>
