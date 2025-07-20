@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { User } from "@supabase/supabase-js";
-import { Message } from "@/lib/types/database";
+import { Message, FileAttachment } from "@/lib/types/database";
 import { createClient } from "@/lib/supabase/client";
 import MessageContainer from "./MessageContainer";
 import ChatInput from "./ChatInput";
@@ -39,8 +39,8 @@ export default function ChatLayout() {
     getUser();
   }, [supabase, router]);
 
-  const handleSendMessage = async (input: string) => {
-    if (!input.trim() || !user || !sessionId) return;
+  const handleSendMessage = async (input: string, files?: FileAttachment[]) => {
+    if ((!input.trim() && (!files || files.length === 0)) || !user || !sessionId) return;
 
     const userMessage: Message = {
       id: `temp-${Date.now()}-user`,
@@ -49,6 +49,7 @@ export default function ChatLayout() {
       message: {
         type: "human",
         content: input.trim(),
+        files: files,
       },
       message_data: null,
       created_at: new Date().toISOString(),
@@ -57,6 +58,8 @@ export default function ChatLayout() {
     setMessages((prev) => [...prev, userMessage]);
     setIsLoading(true);
     setError(null);
+
+    console.log("[ChatLayout-handleSendMessage] Sending message with files:", files?.length || 0);
 
     try {
       const response = await fetch("/api/chat", {
@@ -68,6 +71,7 @@ export default function ChatLayout() {
           query: userMessage.message.content,
           user_id: user.id,
           session_id: sessionId,
+          files: files,
         }),
       });
 

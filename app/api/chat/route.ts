@@ -4,21 +4,18 @@ import { createClient } from "@/lib/supabase/server";
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     // Get the authenticated user
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const body = await request.json();
-    const { query, session_id } = body;
+    const { query, session_id, files } = body;
 
     if (!query || !session_id) {
       return NextResponse.json(
@@ -54,18 +51,35 @@ export async function POST(request: NextRequest) {
       }
       console.log("[API-CHAT] Conversation created:", session_id);
     } else if (conversationError) {
-      console.error("[API-CHAT] Error checking conversation:", conversationError);
+      console.error(
+        "[API-CHAT] Error checking conversation:",
+        conversationError
+      );
       return NextResponse.json(
         { error: `Database error: ${conversationError.message}` },
         { status: 500 }
       );
     }
 
+    // Get the user's session/token for authentication
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session?.access_token) {
+      return NextResponse.json(
+        { error: "No valid session token" },
+        { status: 401 }
+      );
+    }
+
+    console.log("[API-CHAT] Token prefix:", session.access_token.substring(0, 20) + "...");
+
     // Forward the request to the Pydantic agent API
     const apiUrl =
       process.env.NEXT_PUBLIC_PYDANTIC_AGENT_API_URL ||
       "http://localhost:8001/api/pydantic-agent";
-    
+
     const requestId = `req_${Date.now()}_${Math.random()
       .toString(36)
       .substring(2, 9)}`;
@@ -75,6 +89,7 @@ export async function POST(request: NextRequest) {
       user_id: user.id,
       request_id: requestId,
       session_id: session_id,
+      ...(files && { files: files }),
     };
 
     console.log("[API-CHAT] Sending request to:", apiUrl);
@@ -84,6 +99,7 @@ export async function POST(request: NextRequest) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${session.access_token}`,
       },
       body: JSON.stringify(payload),
     });
@@ -104,7 +120,7 @@ export async function POST(request: NextRequest) {
       headers: {
         "Content-Type": "text/event-stream",
         "Cache-Control": "no-cache",
-        "Connection": "keep-alive",
+        Connection: "keep-alive",
       },
     });
   } catch (error) {

@@ -7,6 +7,8 @@
 // Core Models
 // ============================================================================
 
+
+
 export interface UserProfile {
   id: string; // UUID
   email: string;
@@ -30,13 +32,13 @@ export interface Conversation {
   created_at: string | null; // ISO timestamp
   last_message_at: string | null; // ISO timestamp
   is_archived: boolean | null;
-  metadata: Record<string, any>; // JSONB
+  metadata: Record<string, unknown>; // JSONB - currently empty objects
 }
 
 export interface FileAttachment {
   fileName: string;
-  content: string; // Base64 encoded content
-  mimeType: string;
+  content: string; // Base64 encoded content / Binary of the file
+  mimeType: string; // Application/pdf, image/jpeg, etc.
 }
 
 export interface Message {
@@ -56,11 +58,20 @@ export interface Message {
 // Document Management Models
 // ============================================================================
 
+// Document metadata structure based on actual data
+export interface DocumentMetadataFields {
+  file_id: string;
+  file_url: string;
+  mime_type: string;
+  file_title: string;
+  chunk_index: number;
+}
+
 export interface Document {
   id: number; // BIGINT
   content: string | null;
-  metadata: Record<string, any> | null; // JSONB
-  embedding: number[] | null; // Vector type
+  metadata: DocumentMetadataFields | null; // JSONB with file processing info
+  embedding: number[] | null; // Vector type (1536 dimensions for OpenAI embeddings)
 }
 
 export interface DocumentMetadata {
@@ -74,7 +85,7 @@ export interface DocumentMetadata {
 export interface DocumentRow {
   id: number; // Auto-incrementing integer
   dataset_id: string | null; // TEXT, references document_metadata.id
-  row_data: Record<string, any> | null; // JSONB
+  row_data: Record<string, unknown> | null; // JSONB - structure unknown, no data exists
 }
 
 // ============================================================================
@@ -84,7 +95,7 @@ export interface DocumentRow {
 export interface CreateConversationData {
   user_id: string;
   title?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface CreateMessageData {
