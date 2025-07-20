@@ -21,7 +21,11 @@ export default function ChatInput({
 }: ChatInputProps) {
   const [input, setInput] = useState("");
   const [attachedFiles, setAttachedFiles] = useState<FileAttachment[]>([]);
+  const [fileError, setFileError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
+  const MAX_FILES = 3;
 
   const handleSubmit = () => {
     if ((!input.trim() && attachedFiles.length === 0) || isLoading || !user || !sessionId) return;
@@ -36,7 +40,29 @@ export default function ChatInput({
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
+    setFileError(null);
     
+    // Check if adding these files would exceed the maximum
+    if (attachedFiles.length + files.length > MAX_FILES) {
+      setFileError(`Maximum ${MAX_FILES} files allowed. You currently have ${attachedFiles.length} files.`);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      return;
+    }
+    
+    // Validate each file
+    for (const file of files) {
+      if (file.size > MAX_FILE_SIZE) {
+        setFileError(`File "${file.name}" is too large. Maximum size is 5MB.`);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+        return;
+      }
+    }
+    
+    // Process valid files
     for (const file of files) {
       const reader = new FileReader();
       reader.onload = () => {
@@ -62,6 +88,7 @@ export default function ChatInput({
 
   const removeFile = (index: number) => {
     setAttachedFiles(prev => prev.filter((_, i) => i !== index));
+    setFileError(null); // Clear error when removing files
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -111,9 +138,9 @@ export default function ChatInput({
         {/* File attachment button */}
         <button
           onClick={handleFileSelect}
-          disabled={isLoading || !user || !sessionId}
+          disabled={isLoading || !user || !sessionId || attachedFiles.length >= MAX_FILES}
           className="px-3 py-3 bg-black/40 border border-gray-600 rounded-lg text-gray-400 hover:text-yellow-400 hover:border-yellow-400 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-          title="Attach files"
+          title={attachedFiles.length >= MAX_FILES ? `Maximum ${MAX_FILES} files allowed` : "Attach files"}
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
@@ -138,6 +165,13 @@ export default function ChatInput({
         className="hidden"
         accept="image/*,application/pdf,.txt,.doc,.docx,.csv,.json"
       />
+
+      {/* File validation error */}
+      {fileError && (
+        <div className="mt-3 bg-red-500/20 border border-red-500/40 text-red-300 px-4 py-2 rounded-lg text-sm">
+          {fileError}
+        </div>
+      )}
 
       {error && (
         <div className="mt-3 bg-red-500/20 border border-red-500/40 text-red-300 px-4 py-2 rounded-lg text-sm">
